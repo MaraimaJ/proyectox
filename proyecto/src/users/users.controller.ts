@@ -1,14 +1,19 @@
-import { Controller, Get, Req, Post } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Post, Body, Get } from '@nestjs/common';
+import { SumCommand } from './appusers/sum-user-info/sum-info-commands';
+import { RestCommand } from './appusers/rest-user-info/rest-user-info-command';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly commandBus: CommandBus) {}
+
   @Get()
-  sumUser(@Req() request: Request): string {
-    return 'Hola, mundo.';
+  async sum(@Body() body) {
+    return this.commandBus.execute(new SumCommand(body.num1, body.num2));
   }
+
   @Post()
-  resUser(@Req() request: Request): string {
-    return 'Adiós, mundo.';
+  async rest(@Body() body) {
+    return this.commandBus.execute(new RestCommand(body.num1, body.num2));
   }
 }
