@@ -4,6 +4,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { UsersCreateCommand } from '../application/users-create/user-create-info.command';
 import { SumCommand } from '../application/sum-user-info/sum-info-commands';
 import { RestCommand } from '../application/rest-user-info/rest-user-info-command';
+import { CreateUserDto } from './dtos/create-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -20,13 +21,13 @@ export class UsersController {
   }
 
   @Post()
-  async usersCreate(@Body() body) {
-    return this.commandBus.execute(
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<void> {
+    await this.commandBus.execute(
       new UsersCreateCommand(
-        body.firstName,
-        body.lastName,
-        body.email,
-        body.password,
+        createUserDto.firstName,
+        createUserDto.lastName,
+        createUserDto.email,
+        createUserDto.password,
       ),
     );
   }
